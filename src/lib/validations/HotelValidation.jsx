@@ -2,9 +2,14 @@ import { z } from "zod";
 import { formatBytes } from "../utils";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
 
-export const createHotelSchema = z.object({
+export const hotelSchema = z.object({
   name: z.string({ message: "Name is required" }).min(2, {
     message: "Name must be at least 2 characters.",
   }),
@@ -16,13 +21,18 @@ export const createHotelSchema = z.object({
     .any()
     .refine(
       (val) => {
-        const file = val instanceof File ? val : val?.[0];
-        return file instanceof File;
+        if (typeof val === "string" && val.length > 0) {
+          return true;
+        } else {
+          const file = val instanceof File ? val : val?.[0];
+          return file instanceof File;
+        }
       },
       { message: "Please select an image file." }
     )
     .refine(
       (val) => {
+        if (typeof val === "string") return true;
         const file = val instanceof File ? val : val?.[0];
         return file && file.size <= MAX_FILE_SIZE;
       },
@@ -34,6 +44,7 @@ export const createHotelSchema = z.object({
     )
     .refine(
       (val) => {
+        if (typeof val === "string") return true;
         const file = val instanceof File ? val : val?.[0];
         return file && ACCEPTED_IMAGE_TYPES.includes(file.type);
       },

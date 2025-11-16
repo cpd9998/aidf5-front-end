@@ -1,5 +1,6 @@
 import React, { useRef, useMemo, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import { IoCloseSharp } from "react-icons/io5";
 
 const baseStyle = {
   flex: 1,
@@ -106,9 +107,9 @@ const Dropzone = (props) => {
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute top-1 right-0 text-red-500 hover:text-red-700 p-1"
+              className="absolute top-1 right-0 text-red-500 hover:text-red-700 p-1 text-xl"
             >
-              sss
+              <IoCloseSharp className="" />
             </button>
           </div>
 

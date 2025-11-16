@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAddHotelMutation } from "@/lib/api";
 import { toast } from "sonner";
-import { createHotelSchema } from "../../lib/validations/createHotelValidation";
+import { hotelSchema } from "../../lib/validations/HotelValidation";
 import FormInput from "@/components/FormInput";
 import { Spinner } from "@/components/ui/spinner";
 import { Form } from "@/components/ui/form";
@@ -13,7 +13,7 @@ const CreateHotel = () => {
   const [addHotel, { isLoading, isError, error }] = useAddHotelMutation();
 
   const form = useForm({
-    resolver: zodResolver(createHotelSchema),
+    resolver: zodResolver(hotelSchema),
     defaultValues: {
       name: "",
       desc: "",
