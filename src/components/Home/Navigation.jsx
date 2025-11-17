@@ -2,12 +2,7 @@ import { IoMdMenu } from "react-icons/io";
 import { AiOutlineGlobal } from "react-icons/ai";
 import { Link } from "react-router";
 
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 
 import {
   Popover,
@@ -35,7 +30,6 @@ import { MdOutlineBedroomParent } from "react-icons/md";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
   const { user } = useUser();
   const isMobile = useIsMobile();
@@ -88,7 +82,7 @@ const Navigation = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/admin/create-hotel"
+                          to="/admin/hotel/create-category"
                           className="flex-row items-center gap-2"
                         >
                           <Plus />
@@ -99,7 +93,7 @@ const Navigation = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/admin/create-hotel"
+                          to="/admin/hotel/create-room"
                           className="flex-row items-center gap-2"
                         >
                           <Plus />

@@ -9,9 +9,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
-import Dropzone from "../components/Admin/Dropzone";
+import Dropzone from "./Dropzone";
+import { Combobox } from "@/components/ComboBox";
+import { fa } from "zod/v4/locales";
 
-const FormInput = ({ name, label, placeholder, type = "text" }) => {
+const FormInput = ({
+  name,
+  label,
+  placeholder,
+  type = "text",
+  multiple = false,
+}) => {
   const form = useFormContext();
 
   return (
@@ -40,16 +48,24 @@ const FormInput = ({ name, label, placeholder, type = "text" }) => {
             ) : type === "number" ? (
               <Input
                 type={type}
-                value={field.value || ""}
+                value={
+                  field.value === null || field.value === undefined
+                    ? ""
+                    : Number(field.value)
+                }
                 placeholder={placeholder}
                 {...field}
-                onChange={(e) => field.onChange(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  field.onChange(value === "" ? null : Number(value));
+                }}
               />
             ) : (
               <Dropzone
                 name={name}
                 field={field}
                 key={field.value ? field.value.length : 0}
+                multiple={multiple}
               />
             )}
           </FormControl>

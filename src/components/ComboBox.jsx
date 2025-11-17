@@ -15,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Spinner } from "@/components/ui/spinner";
 
 export function Combobox({
   list = [],
@@ -23,6 +24,7 @@ export function Combobox({
   placeholder,
   handleChange,
   field,
+  isLoading,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -42,13 +44,17 @@ export function Combobox({
         </Button>
       </PopoverTrigger>
       <PopoverContent className=" p-0">
-        <Command className=" bg-white">
-          <CommandInput
-            placeholder={placeholder}
-            className="h-9"
-            onKeyPress={handleChange}
-          />
-          <CommandList>
+        <Command className=" bg-white ">
+          <div className="flex justify-between items-center pr-5 ">
+            <CommandInput
+              placeholder={placeholder}
+              className="h-9 "
+              onKeyPress={handleChange}
+            />
+            {isLoading && <Spinner />}
+          </div>
+
+          <CommandList className="border-t">
             <CommandEmpty>No data found.</CommandEmpty>
             <CommandGroup>
               {list.map((data) => (

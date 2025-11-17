@@ -19,8 +19,12 @@ const SingleFileSchema = z
   });
 
 export const roomCategorySchema = z.object({
-  hotelId: z.string({ message: "Hotel is required" }),
-  name: z.string({ message: "Category name is required" }),
+  hotelId: z.string({ message: "Hotel is required" }).min(2, {
+    message: "Hotel is required",
+  }),
+  name: z.string({ message: "Category  is required" }).min(2, {
+    message: "Category  must be at least 2 characters.",
+  }),
   description: z.string({ message: "Description is required" }).min(2, {
     message: "Description must be at least 2 characters.",
   }),
@@ -32,6 +36,8 @@ export const roomCategorySchema = z.object({
     .nonnegative({
       message: "Adult count must be a positive number",
     }),
+
+  maxChildren: z.number().optional(),
 
   amenities: z
     .array(z.string().min(1, { message: "Amenity name cannot be empty." }))

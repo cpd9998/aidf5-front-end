@@ -27,12 +27,12 @@ const UpdateHotel = () => {
   useEffect(() => {
     if (hotel) {
       form.reset({
-        name: hotel.name,
-        desc: hotel.desc,
-        country: hotel.country,
-        city: hotel.city,
-        price: hotel.price,
-        image: hotel.image,
+        name: hotel?.name,
+        desc: hotel?.desc,
+        country: hotel?.country,
+        city: hotel?.city,
+        price: hotel?.price,
+        image: hotel?.image,
       });
     }
   }, [hotel, form]);
@@ -103,6 +103,7 @@ const UpdateHotel = () => {
               label="Image"
               placeholder="Enter image"
               type="image"
+              multiple={false}
             />
           </div>
           <Button

@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAddHotelMutation } from "@/lib/api";
-import Dropzone from "../../components/Admin/Dropzone";
+import Dropzone from "../../components/Dropzone";
 import { formatBytes } from "../../lib/utils";
 import { toast } from "sonner";
 
