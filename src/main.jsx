@@ -19,6 +19,7 @@ import Dashboard from "./page/admin/dashboard";
 import HotelList from "./page/admin/hotel-list";
 import UpdateHotel from "./page/admin/update-hotel";
 import CreateRoomCategory from "./page/admin/create-room-category";
+import RoomCategoryList from "./page/admin/room-categorylist";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -48,6 +49,10 @@ createRoot(document.getElementById("root")).render(
                   <Route
                     path="/admin/hotel/create-category"
                     element={<CreateRoomCategory />}
+                  />
+                  <Route
+                    path="/admin/hotel/room-category-list"
+                    element={<RoomCategoryList />}
                   />
                 </Route>
               </Route>

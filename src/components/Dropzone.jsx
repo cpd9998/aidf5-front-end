@@ -1,4 +1,10 @@
-import React, { useRef, useMemo, useEffect, useCallback } from "react";
+import React, {
+  useRef,
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import { IoCloseSharp } from "react-icons/io5";
 
@@ -30,6 +36,40 @@ const rejectStyle = {
   borderColor: "#ff1744",
 };
 
+const thumbsContainer = {
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  marginTop: 16,
+};
+
+const thumb = {
+  display: "inline-flex",
+  position: "relative",
+  borderRadius: 2,
+  border: "1px solid #eaeaea",
+
+  width: 100,
+  height: 100,
+  // padding: 4,
+  boxSizing: "border-box",
+};
+
+const thumbInner = {
+  display: "flex",
+
+  minWidth: 0,
+  overflow: "hidden",
+};
+
+const img = {
+  display: "block",
+  position: "absolute",
+
+  width: "auto",
+  height: "100%",
+};
+
 const Dropzone = (props) => {
   const { name, field, multiple = true } = props;
 
@@ -46,13 +86,22 @@ const Dropzone = (props) => {
   // Function to handle changes and pass data to RHF
   const handleChange = useCallback(
     (incomingFiles) => {
+      let files;
       if (typeof field?.onChange === "function") {
         if (multiple) {
-          console.log("incoming files", incomingFiles);
-          field.onChange(incomingFiles);
+          field.onChange(
+            incomingFiles.map((file) =>
+              Object.assign(file, {
+                preview: URL.createObjectURL(file),
+              })
+            ) ?? null
+          );
         } else {
-          // Pass the first file or null for single mode
-          field.onChange(incomingFiles[0] ?? null);
+          field.onChange(
+            Object.assign(incomingFiles[0], {
+              preview: URL.createObjectURL(incomingFiles[0]),
+            }) ?? null
+          );
         }
       }
     },
@@ -110,20 +159,43 @@ const Dropzone = (props) => {
 
   const displayFiles = currentFiles.length > 0 || acceptedFiles.length > 0;
 
+  const handleRemove = (e, key) => {
+    console.log(currentFiles, key);
+    e.preventDefault();
+    const filterdList = currentFiles
+      .filter((file) => file.path !== key)
+      .map((file) => {
+        return Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        });
+      });
+    field.onChange(filterdList);
+  };
+
   const fileList = currentFiles.map((file, index) => {
-    // Use an identifier for files that might not have a path (e.g., initial RHF value)
     const key = file.path || `${file.name}-${index}`;
     return (
-      <li key={key}>
-        {file.name || file.path} - {(file.size / 1024).toFixed(2)} KB
-      </li>
+      <div style={thumb} key={key}>
+        <div style={thumbInner}>
+          <img
+            src={file.preview}
+            style={img}
+            // Revoke data uri after image is loaded
+            onLoad={() => {
+              URL.revokeObjectURL(file.preview);
+            }}
+          />
+        </div>
+        <button
+          type="button"
+          onClick={(e) => handleRemove(e, key)}
+          className="absolute top-1 right-0 text-red-500 hover:text-red-700 p-1 text-xl"
+        >
+          <IoCloseSharp className="" />
+        </button>
+      </div>
     );
   });
-
-  const handleRemove = (e) => {
-    e.stopPropagation();
-    field.onChange(null);
-  };
 
   const renderFileInput = (useDropzoneInput) => {
     const defaultInput = (
