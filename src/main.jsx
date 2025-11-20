@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
@@ -14,18 +15,24 @@ import { Provider } from "react-redux";
 import { ClerkProvider } from "@clerk/clerk-react";
 import ProtectLayout from "./components/layout/protect-layout.jsx";
 import AdminProtectLayout from "./components/layout/AdminProtectLayout";
-import CreateHotel from "./page/admin/create-hotel";
 import Dashboard from "./page/admin/dashboard";
-import HotelList from "./page/admin/hotel-list";
-import UpdateHotel from "./page/admin/update-hotel";
-import CreateRoomCategory from "./page/admin/create-room-category";
-import RoomCategoryList from "./page/admin/room-categorylist";
+import { ThemeProvider } from "./components/theme-provider";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Add your Clerk Publishable Key to the .env file");
 }
+
+const LazyCreateHotel = lazy(() => import("./page/admin/create-hotel"));
+const LazyHotelList = lazy(() => import("./page/admin/hotel-list"));
+const LazyUpdateHotel = lazy(() => import("./page/admin/update-hotel"));
+const LazyCreateRoomCategory = lazy(() =>
+  import("./page/admin/create-room-category")
+);
+const LazyRoomCategoryList = lazy(() =>
+  import("./page/admin/room-categorylist")
+);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -43,16 +50,22 @@ createRoot(document.getElementById("root")).render(
 
                 <Route element={<AdminProtectLayout />}>
                   <Route path="/admin" element={<Dashboard />} />
-                  <Route path="/admin/create-hotel" element={<CreateHotel />} />
-                  <Route path="/admin/hotel-list" element={<HotelList />} />
-                  <Route path="/admin/hotel/:id" element={<UpdateHotel />} />
+                  <Route
+                    path="/admin/create-hotel"
+                    element={<LazyCreateHotel />}
+                  />
+                  <Route path="/admin/hotel-list" element={<LazyHotelList />} />
+                  <Route
+                    path="/admin/hotel/:id"
+                    element={<LazyUpdateHotel />}
+                  />
                   <Route
                     path="/admin/hotel/create-category"
-                    element={<CreateRoomCategory />}
+                    element={<LazyCreateRoomCategory />}
                   />
                   <Route
                     path="/admin/hotel/room-category-list"
-                    element={<RoomCategoryList />}
+                    element={<LazyRoomCategoryList />}
                   />
                 </Route>
               </Route>

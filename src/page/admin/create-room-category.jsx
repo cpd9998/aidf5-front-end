@@ -6,7 +6,6 @@ import {
 } from "../../lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import {
@@ -28,6 +27,7 @@ import {
 import { ChevronsUpDown } from "lucide-react";
 import FormInput from "../../components/FormInput";
 import { Spinner } from "@/components/ui/spinner";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const CreateRoomCategory = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,20 +43,9 @@ const CreateRoomCategory = () => {
 
   const isLoading = isLoadingRoomCatagory || isLoadingAddRoomcategory;
 
-  const debounce = (func, delay) => {
-    let timeoutId;
-    return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func(...args), delay);
-    };
-  };
-
-  const handleSearch = useCallback(
-    debounce((searchTerm) => {
-      triggerSearch(searchTerm);
-    }, 500), // 500ms delay
-    [triggerSearch]
-  );
+  const handleSearch = useDebounce((searchTerm) => {
+    triggerSearch(searchTerm);
+  }, 500);
 
   const handleChange = (e) => {
     handleSearch(e.target.value);
@@ -161,7 +150,7 @@ const CreateRoomCategory = () => {
                     <FormControl>
                       <Combobox
                         list={hotelList}
-                        value={hotel?.value || ""}
+                        value={hotel || ""}
                         setValue={setHotel}
                         placeholder="Search Hotels..."
                         handleChange={handleChange}

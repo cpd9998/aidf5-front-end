@@ -17,11 +17,11 @@ const Hero = () => {
     );
   };
 
-  const goToPrevious = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? slides.length - 1 : prevIndex - 1
-    );
-  };
+  // const goToPrevious = () => {
+  //   setCurrentIndex((prevIndex) =>
+  //     prevIndex === 0 ? slides.length - 1 : prevIndex - 1
+  //   );
+  // };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -48,10 +48,14 @@ const Hero = () => {
         </div>
       </div>
       <div></div>
-      <div
+      <img
+        src={
+          slides[currentIndex] ||
+          "https://cf.bstatic.com/xdata/images/hotel/max1280x900.jpg"
+        }
+        fetchpriority="high"
         className=" z-50 w-full h-full bg-cover bg-center transition-all duration-500 ease-in-out "
-        style={{ backgroundImage: `url(${slides[currentIndex]})` }}
-      ></div>
+      />
 
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         {slides.map((_, index) => (

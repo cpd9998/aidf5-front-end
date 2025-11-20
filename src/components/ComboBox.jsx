@@ -28,6 +28,8 @@ export function Combobox({
 }) {
   const [open, setOpen] = React.useState(false);
 
+  console.log("value", value);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -37,9 +39,7 @@ export function Combobox({
           aria-expanded={open}
           className="w-[300px] justify-between"
         >
-          {value
-            ? list.find((data) => data.value === value)?.label
-            : placeholder}
+          {value ? value.label : placeholder}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -62,16 +62,23 @@ export function Combobox({
                   key={data?.value}
                   value={data?.value}
                   onSelect={(currentValue) => {
+                    console.log("current value", currentValue);
                     const hotelData = list.find(
                       (data) => data.label === currentValue
                     );
-                    console.log("currentvalue", currentValue);
-                    field.onChange(hotelData.id);
-                    setValue(
-                      currentValue === value
-                        ? ""
-                        : { id: hotelData.id, value: currentValue }
-                    );
+
+                    console.log("hotel data", hotelData);
+                    field?.onChange(hotelData.id);
+                    setValue(hotelData);
+                    // setValue(
+                    //   currentValue === value
+                    //     ? ""
+                    //     : {
+                    //         id: hotelData.id,
+                    //         value: currentValue,
+                    //         label: currentValue,
+                    //       }
+                    // );
                     setOpen(false);
                   }}
                 >

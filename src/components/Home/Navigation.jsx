@@ -17,7 +17,7 @@ import * as React from "react";
 
 import { Plus, Hotel } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-
+import { useTheme } from "@/components/theme-provider";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -33,6 +33,7 @@ const Navigation = () => {
   const dispatch = useDispatch();
   const { user } = useUser();
   const isMobile = useIsMobile();
+  const { setTheme } = useTheme();
 
   return (
     <nav className="bg-black/90 mx-6  rounded-2xl mt-3  px-6! py-3!  flex justify-between relative ">

@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useMemo,
-  useEffect,
-  useCallback,
-  useState,
-} from "react";
+import React, { useRef, useMemo, useEffect, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { IoCloseSharp } from "react-icons/io5";
 
