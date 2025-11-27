@@ -84,6 +84,18 @@ export const api = createApi({
       ],
     }),
 
+    updateHRoomCategory: build.mutation({
+      query: ({ hotel, id }) => ({
+        url: `/hotels/room-category/${id}`,
+        method: "PUT",
+        body: hotel,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Category", id: "LIST" },
+        { type: "Category", id },
+      ],
+    }),
+
     addLocation: build.mutation({
       query: (location) => ({
         url: "location",
@@ -104,6 +116,20 @@ export const api = createApi({
     getHotelBySearch: build.query({
       query: (query) => `/hotels/search?name=${query}`,
       providesTags: (result, error, id) => [{ type: "Hotel", id }],
+    }),
+
+    getRoomCategoryListByQuery: build.query({
+      query: (query) => `/pagination/room-category?pageNumber=${query}`,
+      providesTags: (result, error, id) => [{ type: "Category", id }],
+    }),
+    getRoomCategoryById: build.query({
+      query: (id) => `/hotels/room-category/${id}`,
+      providesTags: (result, error, id) => [{ type: "Category", id }],
+    }),
+    getRoomCategoryByHotel: build.query({
+      query: (args) =>
+        `/pagination/room-category/${args.hotelId}?pageNumber=${args.page}`,
+      providesTags: (result, error, id) => [{ type: "Category", id }],
     }),
 
     addReview: build.mutation({
@@ -130,4 +156,8 @@ export const {
   useGetHotelBySearchQuery,
   useLazyGetHotelBySearchQuery,
   useAddCategoryMutation,
+  useGetRoomCategoryListByQueryQuery,
+  useGetRoomCategoryByIdQuery,
+  useGetRoomCategoryByHotelQuery,
+  useUpdateHRoomCategoryMutation,
 } = api;

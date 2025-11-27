@@ -9,6 +9,8 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
+const ExistingImageSchema = z.string().url().min(1);
+
 const SingleFileSchema = z
   .instanceof(File, { message: "Item must be a valid File object." })
   .refine((file) => file.size <= MAX_FILE_SIZE, {
@@ -17,6 +19,11 @@ const SingleFileSchema = z
   .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
     message: "Invalid file type. Only JPEG, PNG, or WebP are supported.",
   });
+
+const ImageItemSchema = z.union([
+  ExistingImageSchema, // Accepts existing URLs (strings)
+  SingleFileSchema, // Accepts new File objects
+]);
 
 export const roomCategorySchema = z.object({
   hotelId: z.string({ message: "Hotel is required" }).min(2, {
@@ -45,7 +52,7 @@ export const roomCategorySchema = z.object({
     .default([]),
 
   images: z
-    .array(SingleFileSchema) // Applies file-specific validation to every item
+    .array(ImageItemSchema) // Applies file-specific validation to every item
     .min(1, { message: "At least one image is required." })
     .max(MAX_FILES, {
       message: `You can upload a maximum of ${MAX_FILES} images.`,

@@ -7,7 +7,7 @@ export const handleApiError = (error) => {
 };
 
 // Internal error extractor
-const extractErrorMessage = (error) => {
+export const extractErrorMessage = (error) => {
   if (!error) return "Something went wrong";
 
   // RTK Query error (fetchBaseQuery)

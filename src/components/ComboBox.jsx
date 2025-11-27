@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export function Combobox({
   field,
   isLoading,
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   console.log("value", value);
 
@@ -62,23 +62,12 @@ export function Combobox({
                   key={data?.value}
                   value={data?.value}
                   onSelect={(currentValue) => {
-                    console.log("current value", currentValue);
                     const hotelData = list.find(
                       (data) => data.label === currentValue
                     );
-
-                    console.log("hotel data", hotelData);
                     field?.onChange(hotelData.id);
                     setValue(hotelData);
-                    // setValue(
-                    //   currentValue === value
-                    //     ? ""
-                    //     : {
-                    //         id: hotelData.id,
-                    //         value: currentValue,
-                    //         label: currentValue,
-                    //       }
-                    // );
+
                     setOpen(false);
                   }}
                 >

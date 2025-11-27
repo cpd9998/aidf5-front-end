@@ -45,7 +45,6 @@ const thumb = {
 
   width: 100,
   height: 100,
-  // padding: 4,
   boxSizing: "border-box",
 };
 
@@ -66,30 +65,28 @@ const img = {
 
 const Dropzone = (props) => {
   const { name, field, multiple = true } = props;
-
-  console.log("field?.value", field?.value);
-  const existingImageUrl =
-    !multiple && field?.value && typeof field?.value === "string"
-      ? field?.value
-      : null;
-
-  console.log("existingImageUrl", existingImageUrl);
-
   const hiddenInputRef = useRef(null);
-
-  // Function to handle changes and pass data to RHF
   const handleChange = useCallback(
     (incomingFiles) => {
       let files;
       if (typeof field?.onChange === "function") {
         if (multiple) {
-          field.onChange(
-            incomingFiles.map((file) =>
+          const existingImageUrls = incomingFiles.filter(
+            (item) => typeof item === "string"
+          );
+          const processedNewFiles = incomingFiles
+            .filter((item) => item instanceof File)
+            .map((file) =>
               Object.assign(file, {
                 preview: URL.createObjectURL(file),
               })
-            ) ?? null
-          );
+            );
+
+          const combinedFilesForRHF = [
+            ...existingImageUrls,
+            ...processedNewFiles,
+          ];
+          field.onChange(combinedFilesForRHF);
         } else {
           field.onChange(
             Object.assign(incomingFiles[0], {
@@ -109,7 +106,6 @@ const Dropzone = (props) => {
     isDragAccept,
     isDragReject,
     open,
-    acceptedFiles,
   } = useDropzone({
     onDrop: (incomingFiles) => {
       if (hiddenInputRef.current) {
@@ -119,7 +115,12 @@ const Dropzone = (props) => {
         });
         hiddenInputRef.current.files = dataTransfer.files;
       }
-      handleChange(incomingFiles);
+      if (incomingFiles.length > 0 && multiple) {
+        incomingFiles = [...field.value, ...incomingFiles];
+        handleChange(incomingFiles);
+      } else {
+        handleChange(incomingFiles);
+      }
     },
   });
 
@@ -148,41 +149,45 @@ const Dropzone = (props) => {
       return Array.isArray(field.value) ? field.value : [];
     }
 
-    return field.value && field.value instanceof File ? [field.value] : [];
+    return field.value && field.value instanceof File
+      ? [field.value]
+      : !field.value
+      ? []
+      : [field.value];
   }, [field.value, multiple]);
 
-  const displayFiles = currentFiles.length > 0 || acceptedFiles.length > 0;
+  const displayFiles =
+    multiple && currentFiles != null
+      ? true
+      : !multiple &&
+        (currentFiles[0] instanceof File || typeof currentFiles[0] === "string")
+      ? true
+      : false;
 
   const handleRemove = (e, key) => {
-    console.log(currentFiles, key);
     e.preventDefault();
-    const filterdList = currentFiles
-      .filter((file) => file.path !== key)
-      .map((file) => {
-        return Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        });
-      });
-    field.onChange(filterdList);
+
+    const filterdList = currentFiles.filter(
+      (_, index) => index !== Number(key)
+    );
+
+    const list = filterdList.length > 0 ? filterdList : [];
+    field.onChange(list);
   };
 
   const fileList = currentFiles.map((file, index) => {
-    const key = file.path || `${file.name}-${index}`;
     return (
-      <div style={thumb} key={key}>
+      <div style={thumb} key={index}>
         <div style={thumbInner}>
-          <img
-            src={file.preview}
-            style={img}
-            // Revoke data uri after image is loaded
-            onLoad={() => {
-              URL.revokeObjectURL(file.preview);
-            }}
-          />
+          {file instanceof File ? (
+            <img src={file?.preview} style={img} />
+          ) : (
+            <img src={file} style={img} />
+          )}
         </div>
         <button
           type="button"
-          onClick={(e) => handleRemove(e, key)}
+          onClick={(e) => handleRemove(e, index)}
           className="absolute top-1 right-0 text-red-500 hover:text-red-700 p-1 text-xl"
         >
           <IoCloseSharp className="" />
@@ -196,7 +201,6 @@ const Dropzone = (props) => {
       <input
         type="file"
         name={name}
-        // 5. Set 'multiple' attribute on the manual input
         multiple={multiple}
         onChange={(e) => {
           const files = e.target.files ? Array.from(e.target.files) : [];
@@ -206,52 +210,20 @@ const Dropzone = (props) => {
         ref={hiddenInputRef}
       />
     );
-    // Use either the useDropzone's input or our hidden input
+
     return useDropzoneInput ? <input {...getInputProps()} /> : defaultInput;
   };
 
-  const showExistingSingleImage = existingImageUrl && !displayFiles;
-
   return (
     <div className="">
-      {/* Existing Image URL (Single Mode Only) */}
-      {showExistingSingleImage ? (
-        <div {...getRootProps({ style, onClick: (e) => e.stopPropagation() })}>
-          <p className="text-sm text-gray-500 mb-2 font-semibold">
-            Current Image:
-          </p>
-          <div className="w-32 h-32 mb-3 border rounded overflow-hidden relative">
-            <img
-              src={existingImageUrl}
-              alt="Current Hotel"
-              className="w-full h-full object-cover"
-            />
-            <button
-              type="button"
-              onClick={handleRemove}
-              className="absolute top-1 right-0 text-red-500 hover:text-red-700 p-1 text-xl"
-            >
-              <IoCloseSharp className="" />
-            </button>
-          </div>
-
-          {renderFileInput(false)}
-          <p>Click or drag a new file to replace</p>
-          <button type="button" onClick={open}>
-            Open File Dialog
-          </button>
-        </div>
-      ) : (
-        /* Default Dropzone Area */
-        <div {...getRootProps({ style, onClick: (e) => e.stopPropagation() })}>
-          {renderFileInput(false)}
-          {renderFileInput(true)}
-          <p>Drag 'n' drop files here</p>
-          <button type="button" onClick={open}>
-            Open File Dialog
-          </button>
-        </div>
-      )}
+      <div {...getRootProps({ style, onClick: (e) => e.stopPropagation() })}>
+        {renderFileInput(false)}
+        {renderFileInput(true)}
+        <p>Drag 'n' drop files here</p>
+        <button type="button" onClick={open}>
+          Open File Dialog
+        </button>
+      </div>
 
       {displayFiles && (
         <aside className="mt-4">

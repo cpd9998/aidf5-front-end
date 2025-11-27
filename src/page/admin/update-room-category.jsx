@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Combobox } from "@/components/ComboBox";
 import {
   useLazyGetHotelBySearchQuery,
-  useAddCategoryMutation,
+  useGetRoomCategoryByIdQuery,
 } from "../../lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,20 +28,36 @@ import { ChevronsUpDown } from "lucide-react";
 import FormInput from "../../components/FormInput";
 import { Spinner } from "@/components/ui/spinner";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useParams } from "react-router";
+import { useUpdateHRoomCategoryMutation } from "../../lib/api";
 
-const CreateRoomCategory = () => {
+const UpdateRoomCategory = () => {
+  const { id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [hotelList, setHotelList] = useState([]);
   const [hotel, setHotel] = useState(null);
+  const [updateHRoomCategory] = useUpdateHRoomCategoryMutation();
+
   const [
     triggerSearch,
     { data: searchResults, isLoading: isLoadingRoomCatagory },
   ] = useLazyGetHotelBySearchQuery();
 
-  const [addCategory, { isLoading: isLoadingAddRoomcategory }] =
-    useAddCategoryMutation();
+  console.log("Seacrh result", searchResults);
 
-  const isLoading = isLoadingRoomCatagory || isLoadingAddRoomcategory;
+  const {
+    data: roomCategoryData,
+    isLoading: isLoadingRoomCategory,
+    isError: isErrorRoomCategory,
+    error,
+  } = useGetRoomCategoryByIdQuery(id);
+
+  //const isLoading = isLoadingRoomCatagory || isLoadingAddRoomcategory;
+  console.log("roomCategoryData", roomCategoryData);
+
+  const form = useForm({
+    resolver: zodResolver(roomCategorySchema),
+  });
 
   const handleSearch = useDebounce((searchTerm) => {
     triggerSearch(searchTerm);
@@ -55,28 +71,33 @@ const CreateRoomCategory = () => {
     if (searchResults) {
       setHotelList(searchResults);
     }
-  }, [searchResults]);
+    if (roomCategoryData) {
+      let hotelData = {
+        value: roomCategoryData.hotelId._id,
+        label: roomCategoryData.hotelId.name,
+        id: roomCategoryData.hotelId._id,
+      };
 
-  const form = useForm({
-    resolver: zodResolver(roomCategorySchema),
-    defaultValues: {
-      hotelId: "",
-      name: "",
-      description: "",
-      basePrice: null,
-      maxChildren: null,
-      maxChildren: null,
-      amenities: [],
-      images: [],
-    },
-  });
+      setHotel(hotelData || null);
+
+      form.reset({
+        hotelId: roomCategoryData?.hotelId._id,
+        name: roomCategoryData?.name,
+        description: roomCategoryData?.description,
+        basePrice: Number(roomCategoryData?.basePrice),
+        maxAdults: Number(roomCategoryData?.maxAdults),
+        maxChildren: Number(roomCategoryData?.maxChildren),
+        amenities: roomCategoryData?.amenities || [],
+        images: roomCategoryData?.images || [],
+      });
+    }
+  }, [searchResults, roomCategoryData]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "amenities",
   });
 
-  console.log("selected hotel", hotel);
   async function onSubmit(values) {
     const fieldsToAppend = [
       "hotelId",
@@ -88,7 +109,9 @@ const CreateRoomCategory = () => {
       "amenities",
       "images",
     ];
-    console.log(values);
+
+    console.log("values", values);
+
     const formData = new FormData();
 
     fieldsToAppend.forEach((key) => {
@@ -111,7 +134,7 @@ const CreateRoomCategory = () => {
     });
 
     try {
-      await addCategory(formData).unwrap();
+      await updateHRoomCategory({ hotel: formData, id: id }).unwrap();
       form.reset({
         hotelId: "",
         name: "",
@@ -124,6 +147,7 @@ const CreateRoomCategory = () => {
       });
       setHotel(null);
       setHotelList([]);
+
       toast.success("Hotel created successful !!!");
     } catch (error) {
       console.log(error);
@@ -133,7 +157,7 @@ const CreateRoomCategory = () => {
   return (
     <div className="flex justify-center py-10 bg-gray-50 min-h-screen">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold mb-5  ">Create Room Category</h1>
+        <h1 className="text-3xl font-bold mb-5  ">Update Room Category</h1>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -155,7 +179,7 @@ const CreateRoomCategory = () => {
                         placeholder="Search Hotels..."
                         handleChange={handleChange}
                         field={field}
-                        isLoading={isLoading}
+                        // isLoading={isLoading}
                       />
                     </FormControl>
 
@@ -280,8 +304,8 @@ const CreateRoomCategory = () => {
               />
             </div>
             <Button type="submit" className="mt-4 bg-black text-white">
-              {isLoading && <Spinner />}
-              Create Room Catagory
+              {/* {isLoading && <Spinner />} */}
+              Update Room Catagory
             </Button>
           </form>
         </Form>
@@ -290,4 +314,4 @@ const CreateRoomCategory = () => {
   );
 };
 
-export default CreateRoomCategory;
+export default UpdateRoomCategory;

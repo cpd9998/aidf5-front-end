@@ -31,7 +31,11 @@ const LazyCreateRoomCategory = lazy(() =>
   import("./page/admin/create-room-category")
 );
 const LazyRoomCategoryList = lazy(() =>
-  import("./page/admin/room-categorylist")
+  import("./page/admin/room-category-list")
+);
+
+const LazyUpdateRoomCategory = lazy(() =>
+  import("./page/admin/update-room-category")
 );
 
 createRoot(document.getElementById("root")).render(
@@ -66,6 +70,10 @@ createRoot(document.getElementById("root")).render(
                   <Route
                     path="/admin/hotel/room-category-list"
                     element={<LazyRoomCategoryList />}
+                  />
+                  <Route
+                    path="/admin/hotel/update-room-category/:id"
+                    element={<LazyUpdateRoomCategory />}
                   />
                 </Route>
               </Route>

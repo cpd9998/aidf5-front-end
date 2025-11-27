@@ -16,6 +16,9 @@ const PaginationComponent = ({
   nextPage,
   previousPage,
 }) => {
+  console.log("currentPage", currentPage);
+  console.log("totalPages", totalPages);
+
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(totalPages / perPage); i++) {
     pageNumbers.push(i);

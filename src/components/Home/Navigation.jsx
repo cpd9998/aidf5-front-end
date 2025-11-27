@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useUser } from "@clerk/clerk-react";
 import * as React from "react";
 
