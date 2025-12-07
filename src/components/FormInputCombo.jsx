@@ -29,7 +29,7 @@ const FormInputCombo = ({
           <FormControl>
             <Combobox
               list={list}
-              value={value || ""}
+              value={value}
               setValue={setValue}
               placeholder={placeholder}
               handleChange={handleChange}

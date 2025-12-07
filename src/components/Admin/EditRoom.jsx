@@ -20,17 +20,17 @@ import { Combobox } from "@/components/ComboBox";
 
 const statusLst = [
   {
-    id: 1,
+    id: "Available",
     label: "Available",
     value: "Available",
   },
   {
-    id: 2,
+    id: "Occupied",
     label: "Occupied",
     value: "Occupied",
   },
-  { id: 3, label: "Maintenance", value: "Maintenance" },
-  { id: 4, label: "Cleaning", value: "Cleaning" },
+  { id: "Maintenance", label: "Maintenance", value: "Maintenance" },
+  { id: "Cleaning", label: "Cleaning", value: "Cleaning" },
 ];
 
 export const EditRoom = ({ room, onSubmit, onCancel }) => {
@@ -89,106 +89,102 @@ export const EditRoom = ({ room, onSubmit, onCancel }) => {
     }
   }, [roomData]);
 
+  console.log("room data", roomData);
+
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="lg:w-1/2 w-full "
-        >
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <FormField
-                className="mb-4  w-full "
-                control={form.control}
-                name="hotelId"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Hotel</FormLabel>
-                    <FormControl>
-                      <Combobox
-                        value={hotel || ""}
-                        setValue={setHotel}
-                        placeholder="Search Hotels..."
-                        field={field}
-                        disabled={true}
-                      />
-                    </FormControl>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="lg:w-1/2 w-full ">
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <FormField
+              className="mb-4  w-full "
+              control={form.control}
+              name="hotelId"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Hotel</FormLabel>
+                  <FormControl>
+                    <Combobox
+                      value={hotel || ""}
+                      setValue={setHotel}
+                      placeholder="Search Hotels..."
+                      field={field}
+                      disabled={true}
+                    />
+                  </FormControl>
 
-                    <FormMessage className="text-red-500" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid gap-2">
-              <FormField
-                className="mb-4  w-full "
-                control={form.control}
-                name="categoryId"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <Combobox
-                        value={category || ""}
-                        setValue={setCategory}
-                        placeholder="Search Categories..."
-                        field={field}
-                        disabled={true}
-                      />
-                    </FormControl>
-
-                    <FormMessage className="text-red-500" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid gap-2">
-              <FormInput
-                name="roomNumber"
-                label="Room Number"
-                placeholder="Enter room number"
-              />
-            </div>
-            <div className="grid gap-2">
-              <FormInput
-                name="floor"
-                label="Floor"
-                placeholder="Enter floor number"
-                type="number"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <FormInputCombo
-                list={statusLst || []}
-                value={
-                  status || { label: roomData?.status, value: roomData?.status }
-                }
-                setValue={setStatus}
-                placeholder="Select Status"
-                isLoading={null}
-                name="status"
-                label="Select Status"
-                form={form}
-              />
-            </div>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
           </div>
-          <div className="flex gap-2 mt-6">
-            <Button variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className=" bg-black text-white"
-              disabled={isLoadingUpdateRoom}
-            >
-              {isLoadingUpdateRoom && <Spinner className="mr-2" />}
-              Save Changes
-            </Button>
+          <div className="grid gap-2">
+            <FormField
+              className="mb-4  w-full "
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Combobox
+                      value={category || ""}
+                      setValue={setCategory}
+                      placeholder="Search Categories..."
+                      field={field}
+                      disabled={true}
+                    />
+                  </FormControl>
+
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
           </div>
-        </form>
-      </Form>
-    </>
+          <div className="grid gap-2">
+            <FormInput
+              name="roomNumber"
+              label="Room Number"
+              placeholder="Enter room number"
+            />
+          </div>
+          <div className="grid gap-2">
+            <FormInput
+              name="floor"
+              label="Floor"
+              placeholder="Enter floor number"
+              type="number"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <FormInputCombo
+              list={statusLst || []}
+              value={
+                status || { label: roomData?.status, value: roomData?.status }
+              }
+              setValue={setStatus}
+              placeholder="Select Status"
+              name="status"
+              label="Select Status"
+              form={form}
+            />
+          </div>
+        </div>
+        <div className="flex gap-2 mt-6">
+          <Button variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className=" bg-black text-white"
+            disabled={isLoadingUpdateRoom}
+          >
+            {isLoadingUpdateRoom && <Spinner className="mr-2" />}
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };

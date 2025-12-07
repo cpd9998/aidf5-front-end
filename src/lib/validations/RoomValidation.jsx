@@ -8,11 +8,7 @@ export const roomSchema = z.object({
 
   categoryId: z.string().min(1, "Category  is required"),
 
-  status: z.enum(["Available", "Occupied", "Maintenance", "Cleaning"], {
-    errorMap: () => ({
-      message: "Status must be Available, Occupied, Maintenance, or Cleaning",
-    }),
-  }),
+  status: z.string().min(1, "Status  is required"),
 
   floor: z
     .number({ message: "floor number is required" })

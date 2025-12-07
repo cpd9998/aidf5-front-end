@@ -68,6 +68,7 @@ export function Combobox({
                       const hotelData = list.find(
                         (data) => data.label === currentValue
                       );
+
                       field?.onChange(hotelData.id);
                       setValue(hotelData);
                       setOpen(false);
