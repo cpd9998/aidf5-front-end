@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EyeIcon } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -12,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { DialogComponent } from "@/components/DialogComponent";
-import { EditRoom } from "@/components/Admin/EditRoom";
+import { Room } from "@/components/Admin/Room";
 
 const TableComponent = ({
   headings,
@@ -20,6 +21,8 @@ const TableComponent = ({
   properties = null,
   handleSearch,
   search,
+  handleSort,
+  getSortIcon,
 }) => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -35,8 +38,6 @@ const TableComponent = ({
     setSelectedRoom(null);
   };
 
-  console.log("isEditDialogOpen", isEditDialogOpen);
-
   return (
     <div className="">
       <div className=" mb-4  w-full md:w-[300px] ">
@@ -51,9 +52,35 @@ const TableComponent = ({
         <TableCaption>{data?.length} rooms found</TableCaption>
         <TableHeader>
           <TableRow>
-            {headings.map((item) => (
-              <TableHead className="w-[100px]">{item}</TableHead>
-            ))}
+            {headings.map((item, index) => {
+              // Map heading text to data keys
+              const sortableColumns = {
+                "Room No": "roomNo",
+                Floor: "floor",
+                Status: "status",
+                Hotel: "hotel",
+                Category: "category",
+              };
+
+              const columnKey = sortableColumns[item];
+              const isSortable = columnKey && handleSort && getSortIcon;
+
+              return (
+                <TableHead key={index} className="w-[100px]">
+                  {isSortable ? (
+                    <button
+                      onClick={() => handleSort(columnKey)}
+                      className="flex items-center hover:text-blue-600 transition-colors"
+                    >
+                      {item}
+                      {getSortIcon(columnKey)}
+                    </button>
+                  ) : (
+                    item
+                  )}
+                </TableHead>
+              );
+            })}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -89,7 +116,7 @@ const TableComponent = ({
           title="Edit Room"
           description="Make changes to the room details."
         >
-          <EditRoom
+          <Room
             room={selectedRoom}
             onSubmit={handleSaveEdit}
             onCancel={() => setIsEditDialogOpen(false)}

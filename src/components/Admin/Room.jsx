@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { roomSchema } from "@/lib/validations/RoomValidation";
-import { useDebounce } from "@/hooks/useDebounce";
 import { useUpdateRoomMutation, useGetRoomByIdQuery } from "@/lib/api";
 import FormInput from "@/components/FormInput";
 import FormInputCombo from "@/components/FormInputCombo";
@@ -33,7 +32,7 @@ const statusLst = [
   { id: "Cleaning", label: "Cleaning", value: "Cleaning" },
 ];
 
-export const EditRoom = ({ room, onSubmit, onCancel }) => {
+export const Room = ({ room, onSubmit, onCancel }) => {
   const [hotel, setHotel] = useState(null);
   const [category, setCategory] = useState(null);
   const [status, setStatus] = useState("");

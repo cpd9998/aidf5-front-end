@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Combobox } from "@/components/ComboBox";
 import {
   useGetRoomCategoryByHotelQuery,
@@ -9,6 +9,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Label } from "@radix-ui/react-label";
 import TableComponent from "@/components/TableComponent";
 import PaginationComponent from "@/components/PaginationComponent";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const tableHeadings = [
   "Id",
@@ -27,6 +28,7 @@ const RoomList = () => {
   const [category, setCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState("1");
   const [searchRoom, setSeachRoom] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const [
     triggerSearch,
@@ -109,17 +111,23 @@ const RoomList = () => {
     setSeachRoom(value);
   };
 
-  //   const newRoomList = roomsList?.newRooms?.map((room) => {
-  //     const { _id: id, floor, hotel, category, room: roomNo, status } = room;
-  //     return {
-  //       id,
-  //       floor,
-  //       hotel: hotel.name,
-  //       category: category.name,
-  //       roomNo: roomNo,
-  //       status,
-  //     };
-  //   });
+  const handleSort = (key) => {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const getSortIcon = (columnKey) => {
+    if (sortConfig.key !== columnKey) {
+      return <ChevronsUpDown className="w-4 h-4 ml-1" />;
+    }
+    return sortConfig.direction === "asc" ? (
+      <ChevronUp className="w-4 h-4 ml-1" />
+    ) : (
+      <ChevronDown className="w-4 h-4 ml-1" />
+    );
+  };
 
   const filteredRoomList = useMemo(() => {
     if (!roomsList?.newRooms) return [];
@@ -137,16 +145,39 @@ const RoomList = () => {
     });
 
     // Filter by search term
-    if (!searchRoom) return transformed;
+    let filtered = transformed;
+    if (searchRoom) {
+      const searchLower = searchRoom?.toLowerCase();
+      filtered = transformed.filter(
+        (room) =>
+          room.roomNo.toString().toLowerCase().includes(searchLower) ||
+          room.floor.toString().includes(searchLower) ||
+          room.status.toLowerCase().includes(searchLower)
+      );
+    }
 
-    const searchLower = searchRoom?.toLowerCase();
-    return transformed.filter(
-      (room) =>
-        room.roomNo.toString().toLowerCase().includes(searchLower) ||
-        room.floor.toString().includes(searchLower) ||
-        room.status.toLowerCase().includes(searchLower)
-    );
-  }, [roomsList, searchRoom]);
+    // Sort the filtered results
+    if (sortConfig.key) {
+      filtered.sort((a, b) => {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        // Handle numeric sorting for roomNo and floor
+        if (sortConfig.key === "roomNo" || sortConfig.key === "floor") {
+          const aNum = Number(aValue);
+          const bNum = Number(bValue);
+          return sortConfig.direction === "asc" ? aNum - bNum : bNum - aNum;
+        }
+
+        // Handle string sorting
+        if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [roomsList, searchRoom, sortConfig]);
 
   const statusColors = {
     Available: "text-green-500",
@@ -194,6 +225,8 @@ const RoomList = () => {
             properties={statusColors}
             handleSearch={handleRoomSearch}
             search={searchRoom}
+            handleSort={handleSort}
+            getSortIcon={getSortIcon}
           />
           {!searchRoom && (
             <PaginationComponent
