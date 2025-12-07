@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { Combobox } from "@/components/ComboBox";
-import {
-  useLazyGetHotelBySearchQuery,
-  useGetRoomCategoryByIdQuery,
-} from "../../lib/api";
+import { useLazyGetHotelBySearchQuery } from "../../lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,31 +26,30 @@ import FormInput from "../FormInput";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useParams } from "react-router";
-import { useUpdateHRoomCategoryMutation } from "../../lib/api";
+import {
+  useUpdateHRoomCategoryMutation,
+  useAddCategoryMutation,
+} from "../../lib/api";
+import { useNavigate } from "react-router-dom";
+import { handleApiError } from "../../lib/errorUtils.js";
+import { Spinner } from "../ui/spinner";
 
-const RoomCategoryComponent = () => {
+const RoomCategory = ({ roomCategoryData }) => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [hotelList, setHotelList] = useState([]);
   const [hotel, setHotel] = useState(null);
-  const [updateHRoomCategory] = useUpdateHRoomCategoryMutation();
+
+  const [addCategory, { isLoading: isCreatingCategory }] =
+    useAddCategoryMutation();
+  const [updateHRoomCategory, { isLoading: isUpdaing }] =
+    useUpdateHRoomCategoryMutation();
 
   const [
     triggerSearch,
     { data: searchResults, isLoading: isLoadingRoomCatagory },
   ] = useLazyGetHotelBySearchQuery();
-
-  console.log("Seacrh result", searchResults);
-
-  const {
-    data: roomCategoryData,
-    isLoading: isLoadingRoomCategory,
-    isError: isErrorRoomCategory,
-    error,
-  } = useGetRoomCategoryByIdQuery(id);
-
-  //const isLoading = isLoadingRoomCatagory || isLoadingAddRoomcategory;
-  console.log("roomCategoryData", roomCategoryData);
 
   const form = useForm({
     resolver: zodResolver(roomCategorySchema),
@@ -66,6 +62,8 @@ const RoomCategoryComponent = () => {
   const handleChange = (e) => {
     handleSearch(e.target.value);
   };
+
+  const isLoading = isCreatingCategory || isUpdaing;
 
   useEffect(() => {
     if (searchResults) {
@@ -110,8 +108,6 @@ const RoomCategoryComponent = () => {
       "images",
     ];
 
-    console.log("values", values);
-
     const formData = new FormData();
 
     fieldsToAppend.forEach((key) => {
@@ -134,7 +130,16 @@ const RoomCategoryComponent = () => {
     });
 
     try {
-      await updateHRoomCategory({ hotel: formData, id: id }).unwrap();
+      if (roomCategoryData) {
+        await updateHRoomCategory({ hotel: formData, id: id }).unwrap();
+        toast.success("Room category updated successful !!!");
+        setTimeout(() => {
+          navigate("/admin/hotel/room-category-list");
+        }, 1000);
+      } else {
+        await addCategory(formData).unwrap();
+      }
+
       form.reset({
         hotelId: "",
         name: "",
@@ -150,7 +155,7 @@ const RoomCategoryComponent = () => {
 
       toast.success("Hotel created successful !!!");
     } catch (error) {
-      console.log(error);
+      toast.error(handleApiError(error));
     }
   }
 
@@ -179,7 +184,8 @@ const RoomCategoryComponent = () => {
                         placeholder="Search Hotels..."
                         handleChange={handleChange}
                         field={field}
-                        // isLoading={isLoading}
+                        isLoading={isLoadingRoomCatagory}
+                        disabled={true}
                       />
                     </FormControl>
 
@@ -189,6 +195,7 @@ const RoomCategoryComponent = () => {
               />
 
               <FormInput
+                disabled={true}
                 name="name"
                 label="Category"
                 placeholder="Category name"
@@ -303,8 +310,12 @@ const RoomCategoryComponent = () => {
                 multiple={true}
               />
             </div>
-            <Button type="submit" className="mt-4 bg-black text-white">
-              {/* {isLoading && <Spinner />} */}
+            <Button
+              disabled={isLoading}
+              type="submit"
+              className="mt-4 bg-black text-white"
+            >
+              {isLoading && <Spinner />}
               Update Room Catagory
             </Button>
           </form>
@@ -314,4 +325,4 @@ const RoomCategoryComponent = () => {
   );
 };
 
-export default UpdateRoomCategory;
+export default RoomCategory;

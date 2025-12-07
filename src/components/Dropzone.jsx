@@ -68,7 +68,10 @@ const Dropzone = (props) => {
   const hiddenInputRef = useRef(null);
   const handleChange = useCallback(
     (incomingFiles) => {
-      let files;
+      if (field.value !== undefined) {
+        incomingFiles = [...field.value, ...incomingFiles];
+      }
+
       if (typeof field?.onChange === "function") {
         if (multiple) {
           const existingImageUrls = incomingFiles.filter(
@@ -86,6 +89,7 @@ const Dropzone = (props) => {
             ...existingImageUrls,
             ...processedNewFiles,
           ];
+
           field.onChange(combinedFilesForRHF);
         } else {
           field.onChange(
@@ -116,7 +120,11 @@ const Dropzone = (props) => {
         hiddenInputRef.current.files = dataTransfer.files;
       }
       if (incomingFiles.length > 0 && multiple) {
-        incomingFiles = [...field.value, ...incomingFiles];
+        incomingFiles = [
+          field.value ? [...field.value] : null,
+          ...incomingFiles,
+        ];
+
         handleChange(incomingFiles);
       } else {
         handleChange(incomingFiles);
@@ -146,7 +154,7 @@ const Dropzone = (props) => {
 
   const currentFiles = useMemo(() => {
     if (multiple) {
-      return Array.isArray(field.value) ? field.value : [];
+      return Array.isArray(field.value) ? [...field.value] : [];
     }
 
     return field.value && field.value instanceof File

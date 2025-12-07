@@ -33,8 +33,10 @@ const RoomCategoryList = () => {
 
   const queryParams = {
     hotelId: value?.id,
-    page: currentPage,
+    pageNumber: currentPage,
   };
+
+  console.log("queryParams", queryParams);
 
   const {
     data: category,
@@ -92,7 +94,7 @@ const RoomCategoryList = () => {
 
   console.log("error", error);
 
-  if (isLoading) {
+  if (isLoadingCategoryInitial || isLoadingCategoryByPage) {
     return <RoomCategoryListLoading />;
   }
 

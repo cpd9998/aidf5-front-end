@@ -153,7 +153,7 @@ export const api = createApi({
     }),
     getRoomCategoryByHotel: build.query({
       query: (args) =>
-        `/pagination/room-category/${args.hotelId} ${!args.page && ""}`,
+        `/pagination/room-category/${args.hotelId}?pageNumber=${args.pageNumber}`,
       providesTags: (result, error, id) => [{ type: "Category", id }],
     }),
     getRoomsByQuery: build.query({
