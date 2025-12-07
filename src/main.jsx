@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
@@ -17,6 +17,7 @@ import ProtectLayout from "./components/layout/protect-layout.jsx";
 import AdminProtectLayout from "./components/layout/AdminProtectLayout";
 import Dashboard from "./page/admin/dashboard";
 import { ThemeProvider } from "./components/theme-provider";
+import UpdateHotel from "@/page/admin/update-hotel";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -26,7 +27,7 @@ if (!PUBLISHABLE_KEY) {
 
 const LazyCreateHotel = lazy(() => import("./page/admin/create-hotel"));
 const LazyHotelList = lazy(() => import("./page/admin/hotel-list"));
-const LazyUpdateHotel = lazy(() => import("./page/admin/update-hotel"));
+const LazyUpdateHotel = lazy(() => import("@/page/admin/update-hotel"));
 const LazyCreateRoomCategory = lazy(() =>
   import("./page/admin/create-room-category")
 );
@@ -38,48 +39,61 @@ const LazyUpdateRoomCategory = lazy(() =>
   import("./page/admin/update-room-category")
 );
 
+const LazyCreateRoom = lazy(() => import("./page/admin/create-room"));
+const LazyRoomList = lazy(() => import("./page/admin/room-list"));
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
       <Provider store={store}>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<RootLayoutPage />}>
-              <Route index element={<HomePage />} />
-              <Route path="/sign-in" element={<SignIn />} />
-              <Route path="/sign-up" element={<SignUp />} />
-              <Route path="/hotels" element={<Hotel />} />
-              <Route element={<ProtectLayout />}>
-                <Route path="/hotels/:_id" element={<HotelDetailPage />} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<RootLayoutPage />}>
+                <Route index element={<HomePage />} />
+                <Route path="/sign-in" element={<SignIn />} />
+                <Route path="/sign-up" element={<SignUp />} />
+                <Route path="/hotels" element={<Hotel />} />
+                <Route element={<ProtectLayout />}>
+                  <Route path="/hotels/:_id" element={<HotelDetailPage />} />
 
-                <Route element={<AdminProtectLayout />}>
-                  <Route path="/admin" element={<Dashboard />} />
-                  <Route
-                    path="/admin/create-hotel"
-                    element={<LazyCreateHotel />}
-                  />
-                  <Route path="/admin/hotel-list" element={<LazyHotelList />} />
-                  <Route
-                    path="/admin/hotel/:id"
-                    element={<LazyUpdateHotel />}
-                  />
-                  <Route
-                    path="/admin/hotel/create-category"
-                    element={<LazyCreateRoomCategory />}
-                  />
-                  <Route
-                    path="/admin/hotel/room-category-list"
-                    element={<LazyRoomCategoryList />}
-                  />
-                  <Route
-                    path="/admin/hotel/update-room-category/:id"
-                    element={<LazyUpdateRoomCategory />}
-                  />
+                  <Route element={<AdminProtectLayout />}>
+                    <Route path="/admin" element={<Dashboard />} />
+                    <Route
+                      path="/admin/create-hotel"
+                      element={<LazyCreateHotel />}
+                    />
+                    <Route
+                      path="/admin/hotel-list"
+                      element={<LazyHotelList />}
+                    />
+                    <Route path="/admin/hotel/:id" element={<UpdateHotel />} />
+                    <Route
+                      path="/admin/hotel/create-category"
+                      element={<LazyCreateRoomCategory />}
+                    />
+                    <Route
+                      path="/admin/hotel/room-category-list"
+                      element={<LazyRoomCategoryList />}
+                    />
+                    <Route
+                      path="/admin/hotel/update-room-category/:id"
+                      element={<LazyUpdateRoomCategory />}
+                    />
+                    <Route
+                      path="/admin/hotel/create-room"
+                      element={<LazyCreateRoom />}
+                    />
+                    <Route
+                      path="/admin/hotel/room-list"
+                      element={<LazyRoomList />}
+                    />
+                  </Route>
                 </Route>
               </Route>
-            </Route>
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </Provider>
     </ClerkProvider>

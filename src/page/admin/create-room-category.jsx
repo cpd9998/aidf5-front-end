@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { roomCategorySchema } from "../../lib/validations/roomCategoryValidation";
+import { roomCategorySchema } from "../../lib/validations/RoomCategoryValidation";
 import { FaMinus } from "react-icons/fa";
 import {
   Collapsible,
@@ -76,7 +76,6 @@ const CreateRoomCategory = () => {
     name: "amenities",
   });
 
-  console.log("selected hotel", hotel);
   async function onSubmit(values) {
     const fieldsToAppend = [
       "hotelId",
@@ -88,7 +87,7 @@ const CreateRoomCategory = () => {
       "amenities",
       "images",
     ];
-    console.log(values);
+
     const formData = new FormData();
 
     fieldsToAppend.forEach((key) => {

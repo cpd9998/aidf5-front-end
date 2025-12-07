@@ -117,7 +117,7 @@ const Navigation = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/admin/hotel-list"
+                          to="/admin/hotel/room-list"
                           className="flex-row items-center gap-2"
                         >
                           <MdOutlineBedroomParent />

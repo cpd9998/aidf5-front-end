@@ -4,7 +4,7 @@ import { Navigate } from "react-router";
 
 const ProtectLayout = () => {
   const { isSignedIn, user, isLoaded } = useUser();
-  console.log("users", user);
+
   if (!isLoaded) {
     return null;
   }

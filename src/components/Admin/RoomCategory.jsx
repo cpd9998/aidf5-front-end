@@ -25,13 +25,13 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronsUpDown } from "lucide-react";
-import FormInput from "../../components/FormInput";
-import { Spinner } from "@/components/ui/spinner";
+import FormInput from "../FormInput";
+
 import { useDebounce } from "@/hooks/useDebounce";
 import { useParams } from "react-router";
 import { useUpdateHRoomCategoryMutation } from "../../lib/api";
 
-const UpdateRoomCategory = () => {
+const RoomCategoryComponent = () => {
   const { id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [hotelList, setHotelList] = useState([]);

@@ -14,7 +14,7 @@ export const api = createApi({
       }
     },
   }),
-  tagTypes: ["Hotel", "Location", "Category"],
+  tagTypes: ["Hotel", "Location", "Category", "Room"],
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => "hotels",
@@ -72,6 +72,15 @@ export const api = createApi({
       invalidatesTags: [{ type: "Category", id: "LIST" }],
     }),
 
+    addRoom: build.mutation({
+      query: (room) => ({
+        url: "/hotels/room",
+        method: "POST",
+        body: room,
+      }),
+      invalidatesTags: [{ type: "Room", id: "LIST" }],
+    }),
+
     updateHotel: build.mutation({
       query: ({ hotel, id }) => ({
         url: `/hotels/${id}`,
@@ -96,6 +105,18 @@ export const api = createApi({
       ],
     }),
 
+    updateRoom: build.mutation({
+      query: ({ room, id }) => ({
+        url: `/hotels/room/${id}`,
+        method: "PUT",
+        body: room,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Room", id: "LIST" },
+        { type: "Room", id },
+      ],
+    }),
+
     addLocation: build.mutation({
       query: (location) => ({
         url: "location",
@@ -111,6 +132,10 @@ export const api = createApi({
     getHotelById: build.query({
       query: (id) => `/hotels/${id}`,
       providesTags: (result, error, id) => [{ type: "Hotel", id }],
+    }),
+    getRoomById: build.query({
+      query: (id) => `/hotels/room/${id}`,
+      providesTags: (result, error, id) => [{ type: "Room", id }],
     }),
 
     getHotelBySearch: build.query({
@@ -128,8 +153,19 @@ export const api = createApi({
     }),
     getRoomCategoryByHotel: build.query({
       query: (args) =>
-        `/pagination/room-category/${args.hotelId}?pageNumber=${args.page}`,
+        `/pagination/room-category/${args.hotelId} ${!args.page && ""}`,
       providesTags: (result, error, id) => [{ type: "Category", id }],
+    }),
+    getRoomsByQuery: build.query({
+      query: (args) =>
+        `/pagination/room?hotelId=${args.hotelId}&categoryId=${args.categoryId}&pageNumber=${args.pageNumber}`,
+      providesTags: (result) =>
+        result?.newRooms
+          ? [
+              ...result.newRooms.map(({ _id }) => ({ type: "Room", _id })),
+              { type: "Room", id: "LIST" },
+            ]
+          : [{ type: "Room", id: "LIST" }],
     }),
 
     addReview: build.mutation({
@@ -160,4 +196,9 @@ export const {
   useGetRoomCategoryByIdQuery,
   useGetRoomCategoryByHotelQuery,
   useUpdateHRoomCategoryMutation,
+  useAddRoomMutation,
+  useGetRoomQuery,
+  useGetRoomsByQueryQuery,
+  useUpdateRoomMutation,
+  useGetRoomByIdQuery,
 } = api;

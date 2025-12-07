@@ -24,6 +24,8 @@ const PaginationComponent = ({
     pageNumbers.push(i);
   }
 
+  console.log("page numbers", pageNumbers);
+
   return (
     <Pagination className="mt-3">
       <PaginationContent>

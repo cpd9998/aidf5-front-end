@@ -19,21 +19,23 @@ import { Spinner } from "@/components/ui/spinner";
 
 export function Combobox({
   list = [],
-  value,
-  setValue,
+  value = "",
+  setValue = null,
   placeholder,
-  handleChange,
+  handleChange = null,
   field,
   isLoading,
+  disabled = false,
 }) {
   const [open, setOpen] = useState(false);
 
-  console.log("value", value);
+  console.log("Combo  value", list);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          disabled={disabled}
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -57,29 +59,29 @@ export function Combobox({
           <CommandList className="border-t">
             <CommandEmpty>No data found.</CommandEmpty>
             <CommandGroup>
-              {list.map((data) => (
-                <CommandItem
-                  key={data?.value}
-                  value={data?.value}
-                  onSelect={(currentValue) => {
-                    const hotelData = list.find(
-                      (data) => data.label === currentValue
-                    );
-                    field?.onChange(hotelData.id);
-                    setValue(hotelData);
-
-                    setOpen(false);
-                  }}
-                >
-                  {data.label}
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      value === data.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
+              {list.length > 0 &&
+                list.map((data) => (
+                  <CommandItem
+                    key={data?.value}
+                    value={data?.value}
+                    onSelect={(currentValue) => {
+                      const hotelData = list.find(
+                        (data) => data.label === currentValue
+                      );
+                      field?.onChange(hotelData.id);
+                      setValue(hotelData);
+                      setOpen(false);
+                    }}
+                  >
+                    {data.label}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        value === data.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
             </CommandGroup>
           </CommandList>
         </Command>
