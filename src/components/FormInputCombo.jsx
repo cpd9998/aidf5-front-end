@@ -16,8 +16,9 @@ const FormInputCombo = ({
   name,
   label,
   form,
+  disabled,
 }) => {
-  console.log("combo value", value);
+  console.log("combo listtttttt", list);
   return (
     <FormField
       className="mb-4  w-full "
@@ -28,6 +29,7 @@ const FormInputCombo = ({
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <Combobox
+              disabled={disabled}
               list={list}
               value={value}
               setValue={setValue}

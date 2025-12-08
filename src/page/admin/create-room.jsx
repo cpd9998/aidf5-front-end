@@ -44,6 +44,8 @@ const CreateRoom = () => {
       }
     );
 
+  console.log("cateeeeeee", categories);
+
   const [addRoom, { isLoading: isLoadingRoom, isError: isError, error }] =
     useAddRoomMutation();
 
@@ -146,6 +148,7 @@ const CreateRoom = () => {
               />
 
               <FormInputCombo
+                disabled={categoryList.length > 0 ? false : true}
                 list={categoryList || []}
                 value={category}
                 setValue={setCategory}

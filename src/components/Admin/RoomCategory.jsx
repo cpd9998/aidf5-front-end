@@ -185,7 +185,6 @@ const RoomCategory = ({ roomCategoryData }) => {
                         handleChange={handleChange}
                         field={field}
                         isLoading={isLoadingRoomCatagory}
-                        disabled={true}
                       />
                     </FormControl>
 
@@ -195,7 +194,6 @@ const RoomCategory = ({ roomCategoryData }) => {
               />
 
               <FormInput
-                disabled={true}
                 name="name"
                 label="Category"
                 placeholder="Category name"
@@ -316,7 +314,9 @@ const RoomCategory = ({ roomCategoryData }) => {
               className="mt-4 bg-black text-white"
             >
               {isLoading && <Spinner />}
-              Update Room Catagory
+              {roomCategoryData
+                ? " Update room catagory"
+                : "Create room category"}
             </Button>
           </form>
         </Form>
