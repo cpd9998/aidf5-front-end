@@ -148,7 +148,7 @@ const CreateRoom = () => {
               />
 
               <FormInputCombo
-                disabled={categoryList.length > 0 ? false : true}
+                disabled={categoryList?.length > 0 ? false : true}
                 list={categoryList || []}
                 value={category}
                 setValue={setCategory}

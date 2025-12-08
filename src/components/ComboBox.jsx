@@ -66,7 +66,9 @@ export function Combobox({
                     value={data?.value}
                     onSelect={(currentValue) => {
                       const hotelData = list.find(
-                        (data) => data.label === currentValue
+                        (data) =>
+                          data.label.toLowerCase().trim() ===
+                          currentValue.toLowerCase().trim()
                       );
 
                       field?.onChange(hotelData.id);
