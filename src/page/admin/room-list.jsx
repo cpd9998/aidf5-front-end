@@ -7,7 +7,7 @@ import {
 } from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Label } from "@radix-ui/react-label";
-import TableComponent from "@/components/TableComponent";
+import RoomListTable from "@/components/Admin/RoomListTable";
 import PaginationComponent from "@/components/PaginationComponent";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
@@ -163,14 +163,14 @@ const RoomList = () => {
   const filteredRoomList = useMemo(() => {
     if (!roomsList?.newRooms) return [];
 
-    const transformed = roomsList?.newRooms?.map((room) => {
-      const { _id: id, floor, hotel, category, roomNumber, status } = room;
+    const transformed = roomsList?.newRooms?.map((roomData) => {
+      const { _id: id, floor, hotel, category, room, status } = roomData;
       return {
         id,
         floor,
         hotel: hotel.name,
         category: category.name,
-        roomNo: roomNumber,
+        roomNo: room,
         status,
       };
     });
@@ -251,7 +251,7 @@ const RoomList = () => {
 
         {rooms && rooms?.newRooms?.length > 0 ? (
           <div className="">
-            <TableComponent
+            <RoomListTable
               headings={tableHeadings}
               data={filteredRoomList}
               properties={statusColors}
@@ -263,7 +263,7 @@ const RoomList = () => {
             {!searchRoom && (
               <PaginationComponent
                 currentPage={currentPage}
-                totalPages={roomsList?.totalPages}
+                totalPages={roomsList?.totalRooms}
                 perPage={3}
                 setCurrentPage={setCurrentPage}
                 nextPage={nextPage}

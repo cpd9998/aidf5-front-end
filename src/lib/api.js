@@ -14,7 +14,7 @@ export const api = createApi({
       }
     },
   }),
-  tagTypes: ["Hotel", "Location", "Category", "Room"],
+  tagTypes: ["Hotel", "Location", "Category", "Room", "Bookings"],
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => "hotels",
@@ -116,6 +116,30 @@ export const api = createApi({
         { type: "Room", id },
       ],
     }),
+    updateBookingStatus: build.mutation({
+      query: ({ status, id }) => ({
+        url: `/bookings/${id}`,
+        method: "PUT",
+        body: { status: status },
+      }),
+
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Bookings", id: "LIST" },
+        { type: "Bookings", id },
+      ],
+    }),
+    updateCancelBooking: build.mutation({
+      query: ({ reason, id }) => ({
+        url: `/bookings/${id}`,
+        method: "PATCH",
+        body: { cancellationReason: reason },
+      }),
+
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Bookings", id: "LIST" },
+        { type: "Bookings", id },
+      ],
+    }),
 
     addLocation: build.mutation({
       query: (location) => ({
@@ -176,6 +200,17 @@ export const api = createApi({
       }),
       invalidatesTags: [{ type: "Review", id: "LIST" }],
     }),
+
+    getBookigsByQuery: build.query({
+      query: (page) => `/pagination/bookings?pageNumber=${page}`,
+      providesTags: (result) =>
+        result?.newRooms
+          ? [
+              ...result.newRooms.map(({ _id }) => ({ type: "Bookings", _id })),
+              { type: "Bookings", id: "LIST" },
+            ]
+          : [{ type: "Bookings", id: "LIST" }],
+    }),
   }),
 });
 
@@ -201,4 +236,7 @@ export const {
   useGetRoomsByQueryQuery,
   useUpdateRoomMutation,
   useGetRoomByIdQuery,
+  useGetBookigsByQueryQuery,
+  useUpdateBookingStatusMutation,
+  useUpdateCancelBookingMutation,
 } = api;

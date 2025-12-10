@@ -24,8 +24,6 @@ const PaginationComponent = ({
     pageNumbers.push(i);
   }
 
-  console.log("page numbers", pageNumbers);
-
   return (
     <Pagination className="mt-3">
       <PaginationContent>
@@ -36,7 +34,7 @@ const PaginationComponent = ({
           />
         </PaginationItem>
         {pageNumbers?.map((page) => {
-          if (page === currentPage) {
+          if (page === Number(currentPage)) {
             return (
               <PaginationItem key={page}>
                 <PaginationLink

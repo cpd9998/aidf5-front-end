@@ -15,7 +15,7 @@ import { useState } from "react";
 import { DialogComponent } from "@/components/DialogComponent";
 import { Room } from "@/components/Admin/Room";
 
-const TableComponent = ({
+const RoomListTable = ({
   headings,
   data = [],
   properties = null,
@@ -127,4 +127,4 @@ const TableComponent = ({
   );
 };
 
-export default TableComponent;
+export default RoomListTable;

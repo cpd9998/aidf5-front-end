@@ -128,6 +128,59 @@ const Navigation = () => {
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
+
+              <NavigationMenuItem className="hidden md:block">
+                <NavigationMenuTrigger> Booking</NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-white">
+                  <ul className="grid w-[200px] gap-4  text-black">
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/admin/hotel/create-category"
+                          className="flex-row items-center gap-2"
+                        >
+                          <Plus />
+                          Create Booking
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/admin/bookings/booking-list"
+                          className="flex-row items-center gap-2"
+                        >
+                          <Plus />
+                          Booking List
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/admin/hotel/room-category-list"
+                          className="flex-row items-center gap-2"
+                        >
+                          <MdOutlineBedroomParent />
+                          List of Room Category
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/admin/hotel/room-list"
+                          className="flex-row items-center gap-2"
+                        >
+                          <MdOutlineBedroomParent />
+                          List of Rooms
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
             </>
           )}
         </NavigationMenuList>
