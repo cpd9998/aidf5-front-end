@@ -24,7 +24,7 @@ const FormInput = ({
 
   return (
     <FormField
-      className="mb-4"
+      className={`mb-4`}
       control={form.control}
       name={name}
       render={({ field }) => (

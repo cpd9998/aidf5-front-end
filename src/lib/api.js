@@ -81,6 +81,16 @@ export const api = createApi({
       invalidatesTags: [{ type: "Room", id: "LIST" }],
     }),
 
+    addBooking: build.mutation({
+      query: (booking) => ({
+        url: "/bookings",
+        method: "POST",
+        body: booking,
+      }),
+
+      invalidatesTags: [{ type: "Bookings", id: "LIST" }],
+    }),
+
     updateHotel: build.mutation({
       query: ({ hotel, id }) => ({
         url: `/hotels/${id}`,
@@ -191,6 +201,17 @@ export const api = createApi({
             ]
           : [{ type: "Room", id: "LIST" }],
     }),
+    getAvailability: build.query({
+      query: (args) =>
+        `bookings/availability?hotelId=${args.hotelId}&checkInDate=${args.checkInDate}&checkOutDate=${args.checkOutDate}&maxChildren=${args.maxChildren}&maxAdults=${args.maxAdults}`,
+      providesTags: (result) =>
+        result?.newRooms
+          ? [
+              ...result.newRooms.map(({ _id }) => ({ type: "Room", _id })),
+              { type: "Bookings", id: "LIST" },
+            ]
+          : [{ type: "Bookings", id: "LIST" }],
+    }),
 
     addReview: build.mutation({
       query: (review) => ({
@@ -239,4 +260,6 @@ export const {
   useGetBookigsByQueryQuery,
   useUpdateBookingStatusMutation,
   useUpdateCancelBookingMutation,
+  useLazyGetAvailabilityQuery,
+  useAddBookingMutation,
 } = api;

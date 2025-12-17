@@ -42,6 +42,8 @@ const LazyUpdateRoomCategory = lazy(() =>
 const LazyCreateRoom = lazy(() => import("./page/admin/create-room"));
 const LazyRoomList = lazy(() => import("./page/admin/room-list"));
 const LazyBookingList = lazy(() => import("./page/admin/booking-list"));
+const LazyHotelDetail = lazy(() => import("@/page/hotel-detail.page"));
+const LazyBookingDetail = lazy(() => import("@/components/BookingDetail"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -56,7 +58,7 @@ createRoot(document.getElementById("root")).render(
                 <Route path="/sign-up" element={<SignUp />} />
                 <Route path="/hotels" element={<Hotel />} />
                 <Route element={<ProtectLayout />}>
-                  <Route path="/hotels/:_id" element={<HotelDetailPage />} />
+                  <Route path="/hotels/:_id" element={<LazyHotelDetail />} />
 
                   <Route element={<AdminProtectLayout />}>
                     <Route path="/admin" element={<Dashboard />} />
@@ -94,6 +96,7 @@ createRoot(document.getElementById("root")).render(
                       element={<LazyBookingList />}
                     />
                   </Route>
+                  <Route path="/bookings" element={<LazyBookingDetail />} />
                 </Route>
               </Route>
               <Route path="*" element={<NotFoundPage />} />
