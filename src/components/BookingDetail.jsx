@@ -8,8 +8,11 @@ import { useLocation } from "react-router-dom";
 import { useAddBookingMutation } from "@/lib/api";
 import { toast } from "sonner";
 import { extractErrorMessage } from "@/lib/errorUtils";
+import { useNavigate } from "react-router-dom";
+import { Spinner } from "./ui/spinner";
 
 const BookingDetail = () => {
+  const navigate = useNavigate();
   const [addBooking, { isLoading, isError, error }] = useAddBookingMutation();
   const location = useLocation();
   const {
@@ -42,7 +45,15 @@ const BookingDetail = () => {
         numberOfChildren: maxChildren,
         specialRequests,
       };
-      await addBooking(formData).unwrap();
+      const res = await addBooking(formData).unwrap();
+      navigate("/payments", {
+        state: {
+          order_id: res.bookingNumber,
+          amount: res.totalAmount,
+          currency: "LKR",
+          ...res.guestDetails,
+        },
+      });
     } catch (error) {
       toast.error(extractErrorMessage(error));
     }
@@ -130,7 +141,9 @@ const BookingDetail = () => {
                     <Button
                       type="submit"
                       className="w-full md:w-auto bg-black text-white px-8 py-3 text-lg"
+                      disabled={isLoading}
                     >
+                      {isLoading && <Spinner />}
                       Make Payment
                     </Button>
                   </div>

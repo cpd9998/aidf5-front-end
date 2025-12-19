@@ -163,6 +163,14 @@ export const api = createApi({
       invalidatesTags: [{ type: "Location", id: "LIST" }],
     }),
 
+    addHash: build.mutation({
+      query: (body) => ({
+        url: `/payment/start`,
+        method: "POST",
+        body,
+      }),
+    }),
+
     getHotelById: build.query({
       query: (id) => `/hotels/${id}`,
       providesTags: (result, error, id) => [{ type: "Hotel", id }],
@@ -262,4 +270,5 @@ export const {
   useUpdateCancelBookingMutation,
   useLazyGetAvailabilityQuery,
   useAddBookingMutation,
+  useAddHashMutation,
 } = api;

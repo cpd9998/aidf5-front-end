@@ -44,6 +44,8 @@ const LazyRoomList = lazy(() => import("./page/admin/room-list"));
 const LazyBookingList = lazy(() => import("./page/admin/booking-list"));
 const LazyHotelDetail = lazy(() => import("@/page/hotel-detail.page"));
 const LazyBookingDetail = lazy(() => import("@/components/BookingDetail"));
+const LazyPayment = lazy(() => import("@/page/payment"));
+const LazyPaymentSuccess = lazy(() => import("@/page/payment-success"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -97,6 +99,11 @@ createRoot(document.getElementById("root")).render(
                     />
                   </Route>
                   <Route path="/bookings" element={<LazyBookingDetail />} />
+                  <Route path="/payments" element={<LazyPayment />} />
+                  <Route
+                    path="/payments-success"
+                    element={<LazyPaymentSuccess />}
+                  />
                 </Route>
               </Route>
               <Route path="*" element={<NotFoundPage />} />
